@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"encoding/json"
 	"net/http"
 
 	"github.com/louisevanderlith/blog/core"
@@ -45,4 +46,49 @@ func (req *ArticleController) Get() {
 	results := core.GetLatestArticles(page, size)
 
 	req.Serve(http.StatusOK, nil, results)
+}
+
+// @Title Create Article
+// @Description Create an Article
+// @Param	body		body 	core.Article	true		"body for blog article"
+// @Success 200 {map[string]string} map[string]string
+// @Failure 403 body is empty
+// @router / [post]
+func (req *ArticleController) Post() {
+	var obj core.Article
+	err := json.Unmarshal(req.Ctx.Input.RequestBody, &obj)
+
+	if err != nil {
+		req.Serve(http.StatusBadRequest, err, nil)
+		return
+	}
+
+	rec := obj.Create()
+
+	req.Serve(http.StatusOK, nil, rec)
+}
+
+// @Title UpdateArticle
+// @Description Updates a Website
+// @Param	body		body 	core.Profile	true		"body for service content"
+// @Success 200 {map[string]string} map[string]string
+// @Failure 403 body is empty
+// @router / [put]
+func (req *ArticleController) Put() {
+	body := &core.Article{}
+	key, err := req.GetKeyedRequest(body)
+
+	if err != nil {
+		req.Serve(http.StatusBadRequest, err, nil)
+		return
+	}
+
+	err = body.Update(key)
+
+	if err != nil {
+		req.Serve(http.StatusNotFound, err, nil)
+		return
+	}
+
+	req.Serve(http.StatusOK, nil, nil)
 }

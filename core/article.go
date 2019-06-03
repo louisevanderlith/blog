@@ -29,3 +29,19 @@ func GetLatestArticles(page, size int) husk.Collection {
 	return ctx.Articles.Find(page, size, husk.Everything())
 }
 
+func (a Article) Create() husk.CreateSet {
+	return ctx.Articles.Create(a)
+}
+
+func (a Article) Update(key husk.Key) error {
+	obj, err := ctx.Articles.FindByKey(key)
+
+	if err != nil {
+		return err
+	}
+
+	obj.Set(a)
+
+	defer ctx.Articles.Save()
+	return ctx.Articles.Update(obj)
+}
