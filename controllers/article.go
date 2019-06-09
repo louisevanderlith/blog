@@ -65,6 +65,11 @@ func (req *ArticleController) Post() {
 
 	rec := obj.Create()
 
+	if rec.Error != nil {
+		req.Serve(http.StatusInternalServerError, rec.Error, nil)
+		return
+	}
+
 	req.Serve(http.StatusOK, nil, rec)
 }
 
