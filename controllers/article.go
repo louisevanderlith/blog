@@ -20,7 +20,7 @@ func NewArticleCtrl(ctrlmap *control.ControllerMap) *ArticleController {
 	return result
 }
 
-// /v1/artcicle/:key
+// /:key
 func (req *ArticleController) GetByKey() {
 	k := req.Ctx.Input.Param(":key")
 	key, err := husk.ParseKey(k)
@@ -44,6 +44,14 @@ func (req *ArticleController) GetByKey() {
 func (req *ArticleController) Get() {
 	page, size := req.GetPageData()
 	results := core.GetLatestArticles(page, size)
+
+	req.Serve(http.StatusOK, nil, results)
+}
+
+// @router /non/:pagesize [get]
+func (req *ArticleController) GetNonPublic() {
+	page, size := req.GetPageData()
+	results := core.GetNonPublicArticles(page, size)
 
 	req.Serve(http.StatusOK, nil, results)
 }

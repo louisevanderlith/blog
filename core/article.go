@@ -30,6 +30,10 @@ func GetLatestArticles(page, size int) husk.Collection {
 	return ctx.Articles.Find(page, size, byPublished())
 }
 
+func GetNonPublicArticles(page, size int) husk.Collection {
+	return ctx.Articles.Find(page, size, husk.Everything())
+}
+
 func (a Article) Create() husk.CreateSet {
 	a.Public = false
 
