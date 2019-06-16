@@ -34,6 +34,11 @@ func GetNonPublicArticles(page, size int) husk.Collection {
 	return ctx.Articles.Find(page, size, husk.Everything())
 }
 
+func RemoveArticle(key husk.Key) error {
+	//defer ctx.Articles.Save()
+	return ctx.Articles.Delete(key)
+}
+
 func (a Article) Create() husk.CreateSet {
 	a.Public = false
 

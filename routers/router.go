@@ -19,7 +19,7 @@ func Setup(s *mango.Service, host string) {
 	articleCtrl := controllers.NewArticleCtrl(ctrlmap)
 
 	beego.Router("/v1/article", articleCtrl, "post:Post;put:Put")
-	beego.Router("/v1/article/:key", articleCtrl, "get:GetByKey")
+	beego.Router("/v1/article/:key", articleCtrl, "get:GetByKey;delete:Delete")
 	beego.Router("/v1/article/all/:pagesize", articleCtrl, "get:Get")
 	beego.Router("/v1/article/non/:pagesize", articleCtrl, "get:GetNonPublic")
 }
@@ -31,6 +31,7 @@ func EnableFilters(s *mango.Service, host string) *control.ControllerMap {
 	emptyMap["POST"] = roletype.Admin
 	emptyMap["GET"] = roletype.Unknown
 	emptyMap["PUT"] = roletype.Admin
+	emptyMap["DELETE"] = roletype.Admin
 
 	ctrlmap.Add("/v1/article", emptyMap)
 
@@ -39,7 +40,7 @@ func EnableFilters(s *mango.Service, host string) *control.ControllerMap {
 
 	beego.InsertFilter("*", beego.BeforeRouter, cors.Allow(&cors.Options{
 		AllowOrigins: []string{allowed},
-		AllowMethods: []string{"GET", "PUT", "POST", "OPTIONS"},
+		AllowMethods: []string{"GET", "PUT", "POST", "DELETE", "OPTIONS"},
 	}), false)
 
 	return ctrlmap

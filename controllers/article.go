@@ -105,3 +105,22 @@ func (req *ArticleController) Put() {
 
 	req.Serve(http.StatusOK, nil, nil)
 }
+
+func (req *ArticleController) Delete() {
+	k := req.Ctx.Input.Param(":key")
+	key, err := husk.ParseKey(k)
+
+	if err != nil {
+		req.Serve(http.StatusBadRequest, err, nil)
+		return
+	}
+
+	err = core.RemoveArticle(key)
+
+	if err != nil {
+		req.Serve(http.StatusInternalServerError, err, nil)
+		return
+	}
+
+	req.Serve(http.StatusOK, nil, "Completed")
+}
