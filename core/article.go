@@ -1,15 +1,17 @@
 package core
 
 import (
+	"html/template"
+
 	"github.com/louisevanderlith/husk"
 )
 
 type Article struct {
 	Title     string `hsk:"size(128)"`
 	ImageKey  husk.Key
-	Content   string `hsk:"size(4096)"`
-	WrittenBy string `hsk:"size(64)"`
-	Public    bool   `hsk:"default(false)"`
+	Content   template.HTML `hsk:"size(4096)"`
+	WrittenBy string        `hsk:"size(64)"`
+	Public    bool          `hsk:"default(false)"`
 }
 
 func (a Article) Valid() (bool, error) {
@@ -35,7 +37,7 @@ func GetNonPublicArticles(page, size int) husk.Collection {
 }
 
 func RemoveArticle(key husk.Key) error {
-	//defer ctx.Articles.Save()
+	defer ctx.Articles.Save()
 	return ctx.Articles.Delete(key)
 }
 
