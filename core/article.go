@@ -9,6 +9,7 @@ import (
 //Article is a Blog Post
 type Article struct {
 	Title     string `hsk:"size(128)"`
+	Category  string
 	ImageKey  husk.Key
 	Content   template.HTML `hsk:"size(4096)"`
 	WrittenBy string        `hsk:"size(64)"`
@@ -56,7 +57,11 @@ func (a Article) Update(key husk.Key) error {
 		return err
 	}
 
-	obj.Set(a)
+	err = obj.Set(a)
+
+	if err != nil {
+		return err
+	}
 
 	defer ctx.Articles.Save()
 	return ctx.Articles.Update(obj)
