@@ -6,6 +6,7 @@ import (
 	"github.com/louisevanderlith/husk"
 )
 
+//Article is a Blog Post
 type Article struct {
 	Title     string `hsk:"size(128)"`
 	ImageKey  husk.Key
