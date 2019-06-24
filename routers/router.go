@@ -21,6 +21,7 @@ func Setup(s *mango.Service, host string) {
 	beego.Router("/v1/article", articleCtrl, "post:Post;put:Put")
 	beego.Router("/v1/article/:key", articleCtrl, "get:GetByKey;delete:Delete")
 	beego.Router("/v1/article/all/:pagesize", articleCtrl, "get:Get")
+	beego.Router("/v1/article/all/:category/:pagesize", articleCtrl, "get:GetByCategory")
 	beego.Router("/v1/article/non/:pagesize", articleCtrl, "get:GetNonPublic")
 }
 

@@ -14,6 +14,7 @@ type Article struct {
 	Content   template.HTML `hsk:"size(4096)"`
 	WrittenBy string        `hsk:"size(64)"`
 	Public    bool          `hsk:"default(false)"`
+	Intro     string        `hsk:"size(128)"`
 }
 
 func (a Article) Valid() (bool, error) {
@@ -36,6 +37,10 @@ func GetLatestArticles(page, size int) husk.Collection {
 
 func GetNonPublicArticles(page, size int) husk.Collection {
 	return ctx.Articles.Find(page, size, husk.Everything())
+}
+
+func GetArticlesByCategory(category string, page, size int) husk.Collection {
+	return ctx.Articles.Find(page, size, byCategory(category))
 }
 
 func RemoveArticle(key husk.Key) error {

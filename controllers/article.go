@@ -56,6 +56,15 @@ func (req *ArticleController) GetNonPublic() {
 	req.Serve(http.StatusOK, nil, results)
 }
 
+// @router /all/:category/:pagesize [get]
+func (req *ArticleController) GetByCategory() {
+	category := req.Ctx.Input.Param(":category")
+	page, size := req.GetPageData()
+	results := core.GetArticlesByCategory(category, page, size)
+
+	req.Serve(http.StatusOK, nil, results)
+}
+
 // @Title Create Article
 // @Description Create an Article
 // @Param	body		body 	core.Article	true		"body for blog article"

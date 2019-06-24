@@ -1,6 +1,8 @@
 package core
 
 import (
+	"strings"
+
 	"github.com/louisevanderlith/husk"
 )
 
@@ -13,5 +15,12 @@ func (f articleFilter) Filter(obj husk.Dataer) bool {
 func byPublished() articleFilter {
 	return func(obj *Article) bool {
 		return obj.Public
+	}
+}
+
+func byCategory(category string) articleFilter {
+	lowCat := strings.ToLower(category)
+	return func(obj *Article) bool {
+		return obj.Public && strings.ToLower(obj.Category) == lowCat
 	}
 }
