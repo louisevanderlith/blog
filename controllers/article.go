@@ -1,28 +1,20 @@
 package controllers
 
 import (
-	"encoding/json"
 	"net/http"
 
 	"github.com/louisevanderlith/blog/core"
+	"github.com/louisevanderlith/droxolite/xontrols"
 	"github.com/louisevanderlith/husk"
-	"github.com/louisevanderlith/mango/control"
 )
 
 type ArticleController struct {
-	control.APIController
-}
-
-func NewArticleCtrl(ctrlmap *control.ControllerMap) *ArticleController {
-	result := &ArticleController{}
-	result.SetInstanceMap(ctrlmap)
-
-	return result
+	xontrols.APICtrl
 }
 
 // /:key
 func (req *ArticleController) GetByKey() {
-	k := req.Ctx.Input.Param(":key")
+	k := req.FindParam("key")
 	key, err := husk.ParseKey(k)
 
 	if err != nil {
@@ -58,7 +50,7 @@ func (req *ArticleController) GetNonPublic() {
 
 // @router /all/:category/:pagesize [get]
 func (req *ArticleController) GetByCategory() {
-	category := req.Ctx.Input.Param(":category")
+	category := req.FindParam("category")
 	page, size := req.GetPageData()
 	results := core.GetArticlesByCategory(category, page, size)
 
@@ -73,7 +65,7 @@ func (req *ArticleController) GetByCategory() {
 // @router / [post]
 func (req *ArticleController) Post() {
 	var obj core.Article
-	err := json.Unmarshal(req.Ctx.Input.RequestBody, &obj)
+	err := req.Body(&obj)
 
 	if err != nil {
 		req.Serve(http.StatusBadRequest, err, nil)
@@ -116,7 +108,7 @@ func (req *ArticleController) Put() {
 }
 
 func (req *ArticleController) Delete() {
-	k := req.Ctx.Input.Param(":key")
+	k := req.FindParam("key")
 	key, err := husk.ParseKey(k)
 
 	if err != nil {

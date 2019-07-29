@@ -1,30 +1,35 @@
 package routers
 
 import (
-	"fmt"
-	"strings"
-
 	"github.com/louisevanderlith/blog/controllers"
-	"github.com/louisevanderlith/mango"
+	"github.com/louisevanderlith/droxolite"
 
-	"github.com/astaxie/beego"
-	"github.com/astaxie/beego/plugins/cors"
-	"github.com/louisevanderlith/mango/control"
-	secure "github.com/louisevanderlith/secure/core"
-	"github.com/louisevanderlith/secure/core/roletype"
+	"github.com/louisevanderlith/droxolite/roletype"
 )
 
-func Setup(s *mango.Service, host string) {
-	ctrlmap := EnableFilters(s, host)
+func Setup(poxy *droxolite.Epoxy) {
+	//Article
+	artlCtrl := &controllers.ArticleController{}
+	artlGroup := droxolite.NewRouteGroup("article", artlCtrl)
+	artlGroup.AddRoute("/", "POST", roletype.Admin, artlCtrl.Post)
+	artlGroup.AddRoute("/", "PUT", roletype.Admin, artlCtrl.Put)
+	artlGroup.AddRoute("/{key:[0-9]+\x60[0-9]+}", "GET", roletype.Unknown, artlCtrl.GetByKey)
+	artlGroup.AddRoute("/{key:[0-9]+\x60[0-9]+}", "DELETE", roletype.Admin, artlCtrl.Delete)
+	artlGroup.AddRoute("/all/{pagesize:[A-Z][0-9]+}", "GET", roletype.Unknown, artlCtrl.Get)
+	artlGroup.AddRoute("/all/{category:[a-zA-Z]+}/{pagesize:[A-Z][0-9]+}", "GET", roletype.Unknown, artlCtrl.GetByCategory)
+	artlGroup.AddRoute("/all/non/{pagesize:[A-Z][0-9]+}", "GET", roletype.Unknown, artlCtrl.GetNonPublic)
+	poxy.AddGroup(artlGroup)
+	/*ctrlmap := EnableFilters(s, host)
 	articleCtrl := controllers.NewArticleCtrl(ctrlmap)
 
 	beego.Router("/v1/article", articleCtrl, "post:Post;put:Put")
 	beego.Router("/v1/article/:key", articleCtrl, "get:GetByKey;delete:Delete")
 	beego.Router("/v1/article/all/:pagesize", articleCtrl, "get:Get")
 	beego.Router("/v1/article/all/:category/:pagesize", articleCtrl, "get:GetByCategory")
-	beego.Router("/v1/article/non/:pagesize", articleCtrl, "get:GetNonPublic")
+	beego.Router("/v1/article/non/:pagesize", articleCtrl, "get:GetNonPublic")*/
 }
 
+/*
 func EnableFilters(s *mango.Service, host string) *control.ControllerMap {
 	ctrlmap := control.CreateControlMap(s)
 
@@ -46,3 +51,4 @@ func EnableFilters(s *mango.Service, host string) *control.ControllerMap {
 
 	return ctrlmap
 }
+*/
