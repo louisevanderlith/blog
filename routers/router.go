@@ -11,8 +11,8 @@ func Setup(poxy *droxolite.Epoxy) {
 	//Article
 	artlCtrl := &controllers.ArticleController{}
 	artlGroup := droxolite.NewRouteGroup("article", artlCtrl)
-	artlGroup.AddRoute("Create Article", "/", "POST", roletype.Admin, artlCtrl.Post)
-	artlGroup.AddRoute("Update Article", "/", "PUT", roletype.Admin, artlCtrl.Put)
+	artlGroup.AddRoute("Create Article", "", "POST", roletype.Admin, artlCtrl.Post)
+	artlGroup.AddRoute("Update Article", "", "PUT", roletype.Admin, artlCtrl.Put)
 	artlGroup.AddRoute("Article By Key", "/{key:[0-9]+\x60[0-9]+}", "GET", roletype.Unknown, artlCtrl.GetByKey)
 	artlGroup.AddRoute("Delete Article", "/{key:[0-9]+\x60[0-9]+}", "DELETE", roletype.Admin, artlCtrl.Delete)
 	artlGroup.AddRoute("All Published Articles", "/all/{pagesize:[A-Z][0-9]+}", "GET", roletype.Unknown, artlCtrl.Get)
