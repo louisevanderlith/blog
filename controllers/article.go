@@ -4,57 +4,54 @@ import (
 	"net/http"
 
 	"github.com/louisevanderlith/blog/core"
-	"github.com/louisevanderlith/droxolite/xontrols"
+	"github.com/louisevanderlith/droxolite/context"
 	"github.com/louisevanderlith/husk"
 )
 
 type ArticleController struct {
-	xontrols.APICtrl
 }
 
 // /:key
-func (req *ArticleController) GetByKey() {
-	k := req.FindParam("key")
+func (req *ArticleController) GetByKey(ctx context.Contexer) (int, interface{}) {
+	k := ctx.FindParam("key")
 	key, err := husk.ParseKey(k)
 
 	if err != nil {
-		req.Serve(http.StatusBadRequest, err, nil)
-		return
+		return http.StatusBadRequest, err
 	}
 
 	rec, err := core.GetArticle(key)
 
 	if err != nil {
-		req.Serve(http.StatusNotFound, err, nil)
-		return
+		return http.StatusNotFound, err
 	}
 
-	req.Serve(http.StatusOK, nil, rec)
+	return http.StatusOK, rec
 }
 
 // @router /all/:pagesize [get]
-func (req *ArticleController) Get() {
-	page, size := req.GetPageData()
+func (req *ArticleController) Get(ctx context.Contexer) (int, interface{}) {
+	page, size := ctx.GetPageData()
 	results := core.GetLatestArticles(page, size)
 
-	req.Serve(http.StatusOK, nil, results)
+	return http.StatusOK, results
 }
 
 // @router /non/:pagesize [get]
-func (req *ArticleController) GetNonPublic() {
-	page, size := req.GetPageData()
+func (req *ArticleController) GetNonPublic(ctx context.Contexer) (int, interface{}) {
+	page, size := ctx.GetPageData()
 	results := core.GetNonPublicArticles(page, size)
 
-	req.Serve(http.StatusOK, nil, results)
+	return http.StatusOK, results
 }
 
 // @router /all/:category/:pagesize [get]
-func (req *ArticleController) GetByCategory() {
-	category := req.FindParam("category")
-	page, size := req.GetPageData()
+func (req *ArticleController) GetByCategory(ctx context.Contexer) (int, interface{}) {
+	category := ctx.FindParam("category")
+	page, size := ctx.GetPageData()
 	results := core.GetArticlesByCategory(category, page, size)
 
-	req.Serve(http.StatusOK, nil, results)
+	return http.StatusOK, results
 }
 
 // @Title Create Article
@@ -63,23 +60,21 @@ func (req *ArticleController) GetByCategory() {
 // @Success 200 {map[string]string} map[string]string
 // @Failure 403 body is empty
 // @router / [post]
-func (req *ArticleController) Post() {
+func (req *ArticleController) Post(ctx context.Contexer) (int, interface{}) {
 	var obj core.Article
-	err := req.Body(&obj)
+	err := ctx.Body(&obj)
 
 	if err != nil {
-		req.Serve(http.StatusBadRequest, err, nil)
-		return
+		return http.StatusBadRequest, err
 	}
 
 	rec := obj.Create()
 
 	if rec.Error != nil {
-		req.Serve(http.StatusInternalServerError, rec.Error, nil)
-		return
+		return http.StatusInternalServerError, rec.Error
 	}
 
-	req.Serve(http.StatusOK, nil, rec)
+	return http.StatusOK, rec
 }
 
 // @Title UpdateArticle
@@ -88,40 +83,36 @@ func (req *ArticleController) Post() {
 // @Success 200 {map[string]string} map[string]string
 // @Failure 403 body is empty
 // @router / [put]
-func (req *ArticleController) Put() {
+func (req *ArticleController) Put(ctx context.Contexer) (int, interface{}) {
 	body := &core.Article{}
-	key, err := req.GetKeyedRequest(body)
+	key, err := ctx.GetKeyedRequest(body)
 
 	if err != nil {
-		req.Serve(http.StatusBadRequest, err, nil)
-		return
+		return http.StatusBadRequest, err
 	}
 
 	err = body.Update(key)
 
 	if err != nil {
-		req.Serve(http.StatusNotFound, err, nil)
-		return
+		return http.StatusNotFound, err
 	}
 
-	req.Serve(http.StatusOK, nil, nil)
+	return http.StatusOK, nil
 }
 
-func (req *ArticleController) Delete() {
-	k := req.FindParam("key")
+func (req *ArticleController) Delete(ctx context.Contexer) (int, interface{}) {
+	k := ctx.FindParam("key")
 	key, err := husk.ParseKey(k)
 
 	if err != nil {
-		req.Serve(http.StatusBadRequest, err, nil)
-		return
+		return http.StatusBadRequest, err
 	}
 
 	err = core.RemoveArticle(key)
 
 	if err != nil {
-		req.Serve(http.StatusInternalServerError, err, nil)
-		return
+		return http.StatusInternalServerError, err
 	}
 
-	req.Serve(http.StatusOK, nil, "Completed")
+	return http.StatusOK, "Completed"
 }

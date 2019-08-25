@@ -2,15 +2,17 @@ package routers
 
 import (
 	"github.com/louisevanderlith/blog/controllers"
-	"github.com/louisevanderlith/droxolite"
 
+	"github.com/louisevanderlith/droxolite/mix"
+	"github.com/louisevanderlith/droxolite/resins"
 	"github.com/louisevanderlith/droxolite/roletype"
+	"github.com/louisevanderlith/droxolite/routing"
 )
 
-func Setup(poxy *droxolite.Epoxy) {
+func Setup(poxy resins.Epoxi) {
 	//Article
 	artlCtrl := &controllers.ArticleController{}
-	artlGroup := droxolite.NewRouteGroup("article", artlCtrl)
+	artlGroup := routing.NewRouteGroup("article", mix.JSON)
 	artlGroup.AddRoute("Create Article", "", "POST", roletype.Admin, artlCtrl.Post)
 	artlGroup.AddRoute("Update Article", "", "PUT", roletype.Admin, artlCtrl.Put)
 	artlGroup.AddRoute("Article By Key", "/{key:[0-9]+\x60[0-9]+}", "GET", roletype.Unknown, artlCtrl.GetByKey)
