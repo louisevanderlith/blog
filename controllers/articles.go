@@ -8,11 +8,17 @@ import (
 	"github.com/louisevanderlith/husk"
 )
 
-type ArticleController struct {
+type Articles struct {
+}
+
+func (req *Articles) Get(ctx context.Requester) (int, interface{}) {
+	results := core.GetNonPublicArticles(1, 10)
+
+	return http.StatusOK, results
 }
 
 // /:key
-func (req *ArticleController) GetByKey(ctx context.Contexer) (int, interface{}) {
+func (req *Articles) View(ctx context.Requester) (int, interface{}) {
 	k := ctx.FindParam("key")
 	key, err := husk.ParseKey(k)
 
@@ -30,26 +36,9 @@ func (req *ArticleController) GetByKey(ctx context.Contexer) (int, interface{}) 
 }
 
 // @router /all/:pagesize [get]
-func (req *ArticleController) Get(ctx context.Contexer) (int, interface{}) {
-	page, size := ctx.GetPageData()
-	results := core.GetLatestArticles(page, size)
-
-	return http.StatusOK, results
-}
-
-// @router /non/:pagesize [get]
-func (req *ArticleController) GetNonPublic(ctx context.Contexer) (int, interface{}) {
+func (req *Articles) Search(ctx context.Requester) (int, interface{}) {
 	page, size := ctx.GetPageData()
 	results := core.GetNonPublicArticles(page, size)
-
-	return http.StatusOK, results
-}
-
-// @router /all/:category/:pagesize [get]
-func (req *ArticleController) GetByCategory(ctx context.Contexer) (int, interface{}) {
-	category := ctx.FindParam("category")
-	page, size := ctx.GetPageData()
-	results := core.GetArticlesByCategory(category, page, size)
 
 	return http.StatusOK, results
 }
@@ -60,7 +49,7 @@ func (req *ArticleController) GetByCategory(ctx context.Contexer) (int, interfac
 // @Success 200 {map[string]string} map[string]string
 // @Failure 403 body is empty
 // @router / [post]
-func (req *ArticleController) Post(ctx context.Contexer) (int, interface{}) {
+func (req *Articles) Create(ctx context.Requester) (int, interface{}) {
 	var obj core.Article
 	err := ctx.Body(&obj)
 
@@ -83,7 +72,7 @@ func (req *ArticleController) Post(ctx context.Contexer) (int, interface{}) {
 // @Success 200 {map[string]string} map[string]string
 // @Failure 403 body is empty
 // @router / [put]
-func (req *ArticleController) Put(ctx context.Contexer) (int, interface{}) {
+func (req *Articles) Update(ctx context.Requester) (int, interface{}) {
 	body := &core.Article{}
 	key, err := ctx.GetKeyedRequest(body)
 
@@ -100,7 +89,7 @@ func (req *ArticleController) Put(ctx context.Contexer) (int, interface{}) {
 	return http.StatusOK, nil
 }
 
-func (req *ArticleController) Delete(ctx context.Contexer) (int, interface{}) {
+func (req *Articles) Delete(ctx context.Requester) (int, interface{}) {
 	k := ctx.FindParam("key")
 	key, err := husk.ParseKey(k)
 
