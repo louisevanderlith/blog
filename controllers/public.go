@@ -5,6 +5,7 @@ import (
 
 	"github.com/louisevanderlith/blog/core"
 	"github.com/louisevanderlith/droxolite/context"
+	"github.com/louisevanderlith/husk"
 )
 
 type Public struct {
@@ -22,6 +23,23 @@ func (x *Public) Search(ctx context.Requester) (int, interface{}) {
 	results := core.GetLatestArticles(page, size)
 
 	return http.StatusOK, results
+}
+
+func (req *Public) View(ctx context.Requester) (int, interface{}) {
+	k := ctx.FindParam("key")
+	key, err := husk.ParseKey(k)
+
+	if err != nil {
+		return http.StatusBadRequest, err
+	}
+
+	rec, err := core.GetArticle(key)
+
+	if err != nil {
+		return http.StatusNotFound, err
+	}
+
+	return http.StatusOK, rec
 }
 
 //this should use search !

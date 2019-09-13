@@ -8,17 +8,17 @@ import (
 	"github.com/louisevanderlith/husk"
 )
 
-type Articles struct {
+type Article struct {
 }
 
-func (req *Articles) Get(ctx context.Requester) (int, interface{}) {
+func (req *Article) Get(ctx context.Requester) (int, interface{}) {
 	results := core.GetNonPublicArticles(1, 10)
 
 	return http.StatusOK, results
 }
 
 // /:key
-func (req *Articles) View(ctx context.Requester) (int, interface{}) {
+func (req *Article) View(ctx context.Requester) (int, interface{}) {
 	k := ctx.FindParam("key")
 	key, err := husk.ParseKey(k)
 
@@ -36,7 +36,7 @@ func (req *Articles) View(ctx context.Requester) (int, interface{}) {
 }
 
 // @router /all/:pagesize [get]
-func (req *Articles) Search(ctx context.Requester) (int, interface{}) {
+func (req *Article) Search(ctx context.Requester) (int, interface{}) {
 	page, size := ctx.GetPageData()
 	results := core.GetNonPublicArticles(page, size)
 
@@ -49,7 +49,7 @@ func (req *Articles) Search(ctx context.Requester) (int, interface{}) {
 // @Success 200 {map[string]string} map[string]string
 // @Failure 403 body is empty
 // @router / [post]
-func (req *Articles) Create(ctx context.Requester) (int, interface{}) {
+func (req *Article) Create(ctx context.Requester) (int, interface{}) {
 	var obj core.Article
 	err := ctx.Body(&obj)
 
@@ -72,7 +72,7 @@ func (req *Articles) Create(ctx context.Requester) (int, interface{}) {
 // @Success 200 {map[string]string} map[string]string
 // @Failure 403 body is empty
 // @router / [put]
-func (req *Articles) Update(ctx context.Requester) (int, interface{}) {
+func (req *Article) Update(ctx context.Requester) (int, interface{}) {
 	body := &core.Article{}
 	key, err := ctx.GetKeyedRequest(body)
 
@@ -89,7 +89,7 @@ func (req *Articles) Update(ctx context.Requester) (int, interface{}) {
 	return http.StatusOK, nil
 }
 
-func (req *Articles) Delete(ctx context.Requester) (int, interface{}) {
+func (req *Article) Delete(ctx context.Requester) (int, interface{}) {
 	k := ctx.FindParam("key")
 	key, err := husk.ParseKey(k)
 

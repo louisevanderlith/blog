@@ -10,7 +10,7 @@ import (
 
 func Setup(e resins.Epoxi) {
 	e.JoinBundle("/", roletype.Unknown, mix.JSON, &controllers.Public{})
-	e.JoinBundle("/admin", roletype.Admin, mix.JSON, &controllers.Articles{})
+	e.JoinBundle("/", roletype.Admin, mix.JSON, &controllers.Article{})
 
 	//Article
 	/*

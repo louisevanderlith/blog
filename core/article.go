@@ -44,8 +44,13 @@ func GetArticlesByCategory(category string, page, size int) husk.Collection {
 }
 
 func RemoveArticle(key husk.Key) error {
-	defer ctx.Articles.Save()
-	return ctx.Articles.Delete(key)
+	err := ctx.Articles.Delete(key)
+
+	if err != nil {
+		return err
+	}
+
+	return ctx.Articles.Save()
 }
 
 func (a Article) Create() husk.CreateSet {
@@ -68,12 +73,11 @@ func (a Article) Update(key husk.Key) error {
 		return err
 	}
 
-	defer ctx.Articles.Save()
-	return ctx.Articles.Update(obj)
-}
+	err = ctx.Articles.Update(obj)
 
-func (a Article) Publish(key husk.Key) error {
-	a.Public = true
+	if err != nil {
+		return err
+	}
 
-	return a.Update(key)
+	return ctx.Articles.Save()
 }
