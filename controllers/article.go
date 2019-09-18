@@ -73,8 +73,14 @@ func (req *Article) Create(ctx context.Requester) (int, interface{}) {
 // @Failure 403 body is empty
 // @router / [put]
 func (req *Article) Update(ctx context.Requester) (int, interface{}) {
+	key, err := husk.ParseKey(ctx.FindParam("key"))
+
+	if err != nil {
+		return http.StatusBadRequest, err
+	}
+
 	body := &core.Article{}
-	key, err := ctx.GetKeyedRequest(body)
+	err = ctx.Body(body)
 
 	if err != nil {
 		return http.StatusBadRequest, err
