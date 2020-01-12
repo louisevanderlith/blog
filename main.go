@@ -1,20 +1,48 @@
 package main
 
 import (
-	"os"
-	"path"
-	"strconv"
-
+	"context"
+	oidc "github.com/coreos/go-oidc"
+	"github.com/gin-gonic/gin"
+	"github.com/louisevanderlith/blog/controllers/article"
 	"github.com/louisevanderlith/blog/core"
-	"github.com/louisevanderlith/blog/routers"
-	"github.com/louisevanderlith/droxolite"
-	"github.com/louisevanderlith/droxolite/bodies"
-	"github.com/louisevanderlith/droxolite/do"
-	"github.com/louisevanderlith/droxolite/element"
-	"github.com/louisevanderlith/droxolite/resins"
-	"github.com/louisevanderlith/droxolite/servicetype"
+	"os"
 )
 
+func main() {
+	core.CreateContext()
+	defer core.Shutdown()
+
+	r := gin.Default()
+	//r.Use(cors)
+	host := os.Getenv("HOST")
+	authority := "https://oauth2." + host
+	provider, err := oidc.NewProvider(context.Background(), authority)
+	if err != nil {
+		panic(err)
+	}
+
+	r.GET("/article/:key", article.View)
+
+	authed := r.Group("/article")
+	authed.Use(provider.Verifier(&oidc.Config{}))
+
+	articles := r.Group("/article")
+	articles.POST("", article.Create)
+	articles.PUT("/:key", article.Update)
+	articles.DELETE("/:key", article.Delete)
+	articles.GET("/:key", article.View)
+
+	r.GET("/articles", article.Get)
+	r.GET("/articles/:pagesize/*hash", article.Search)
+	err := r.Run(":8102")
+
+	if err != nil {
+		panic(err)
+	}
+}
+
+/*
 func main() {
 	keyPath := os.Getenv("KEYPATH")
 	pubName := os.Getenv("PUBLICKEY")
@@ -51,3 +79,4 @@ func main() {
 		panic(err)
 	}
 }
+*/

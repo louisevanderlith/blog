@@ -21,14 +21,14 @@ func (a Article) Valid() (bool, error) {
 	return husk.ValidateStruct(&a)
 }
 
-func GetArticle(key husk.Key) (*Article, error) {
+func GetArticle(key husk.Key) (Article, error) {
 	rec, err := ctx.Articles.FindByKey(key)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return rec.Data().(*Article), nil
+	return rec.Data().(Article), nil
 }
 
 func GetLatestArticles(page, size int) husk.Collection {
