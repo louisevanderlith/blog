@@ -25,7 +25,7 @@ func GetArticle(key husk.Key) (Article, error) {
 	rec, err := ctx.Articles.FindByKey(key)
 
 	if err != nil {
-		return nil, err
+		return Article{}, err
 	}
 
 	return rec.Data().(Article), nil

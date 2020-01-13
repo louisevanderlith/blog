@@ -1,12 +1,10 @@
 package main
 
 import (
-	"context"
-	oidc "github.com/coreos/go-oidc"
 	"github.com/gin-gonic/gin"
 	"github.com/louisevanderlith/blog/controllers/article"
 	"github.com/louisevanderlith/blog/core"
-	"os"
+	"github.com/louisevanderlith/blog/droxo"
 )
 
 func main() {
@@ -15,23 +13,20 @@ func main() {
 
 	r := gin.Default()
 	//r.Use(cors)
-	host := os.Getenv("HOST")
-	authority := "https://oauth2." + host
-	provider, err := oidc.NewProvider(context.Background(), authority)
-	if err != nil {
-		panic(err)
-	}
+	//host := os.Getenv("HOST")
+	//authority := "https://oauth2." + host
+	//provider, err := oidc.NewProvider(context.Background(), authority)
+	//if err != nil {
+	//	panic(err)
+	//}
 
 	r.GET("/article/:key", article.View)
 
 	authed := r.Group("/article")
-	authed.Use(provider.Verifier(&oidc.Config{}))
-
-	articles := r.Group("/article")
-	articles.POST("", article.Create)
-	articles.PUT("/:key", article.Update)
-	articles.DELETE("/:key", article.Delete)
-	articles.GET("/:key", article.View)
+	authed.Use(droxo.Authorize())
+	authed.POST("", article.Create)
+	authed.PUT("/:key", article.Update)
+	authed.DELETE("/:key", article.Delete)
 
 	r.GET("/articles", article.Get)
 	r.GET("/articles/:pagesize/*hash", article.Search)

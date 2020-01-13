@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/louisevanderlith/blog/core"
 	"github.com/louisevanderlith/husk"
+	"log"
 	"net/http"
 	"strconv"
 )
@@ -57,10 +58,12 @@ func Create(c *gin.Context) {
 }
 
 func Update(c *gin.Context) {
+	log.Println(c.Get("client"))
 	key, err := husk.ParseKey(c.Param("key"))
 
 	if err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
+		return
 	}
 
 	body := &core.Article{}
@@ -68,6 +71,7 @@ func Update(c *gin.Context) {
 
 	if err != nil {
 		c.AbortWithError(http.StatusBadRequest, err)
+		return
 	}
 
 	err = body.Update(key)
@@ -80,6 +84,7 @@ func Update(c *gin.Context) {
 }
 
 func Delete(c *gin.Context) {
+	log.Println(c.MustGet("client"))
 	k := c.Param("key")
 	key, err := husk.ParseKey(k)
 
