@@ -1,12 +1,12 @@
 package article
 
 import (
+	"log"
+	"net/http"
+
 	"github.com/gin-gonic/gin"
 	"github.com/louisevanderlith/blog/core"
 	"github.com/louisevanderlith/husk"
-	"log"
-	"net/http"
-	"strconv"
 )
 
 func Get(c *gin.Context) {
@@ -33,7 +33,7 @@ func View(c *gin.Context) {
 }
 
 func Search(c *gin.Context) {
-	page, size := getPageData(c.Param("pagesize"))
+	page, size := droxo.GetPageData(c.Param("pagesize"))
 
 	results := core.GetNonPublicArticles(page, size)
 
@@ -99,28 +99,4 @@ func Delete(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, "Completed")
-}
-
-func getPageData(pageData string) (int, int) {
-	defaultPage := 1
-	defaultSize := 10
-
-	if len(pageData) < 2 {
-		return defaultPage, defaultSize
-	}
-
-	pChar := []rune(pageData[:1])
-
-	if len(pChar) != 1 {
-		return defaultPage, defaultSize
-	}
-
-	page := int(pChar[0]) % 32
-	pageSize, err := strconv.Atoi(pageData[1:])
-
-	if err != nil {
-		return defaultPage, defaultSize
-	}
-
-	return page, pageSize
 }

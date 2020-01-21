@@ -9,7 +9,7 @@ require (
 	github.com/json-iterator/go v1.1.9 // indirect
 	github.com/kr/pretty v0.1.0 // indirect
 	github.com/leodido/go-urn v1.2.0 // indirect
-	github.com/louisevanderlith/husk v0.6.29
+	github.com/louisevanderlith/husk v0.0.0-20191215135532-d37a499a2503
 	github.com/mattn/go-isatty v0.0.11 // indirect
 	github.com/maxzerbini/oauth v0.0.0-20190809074857-12de74d43292
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
