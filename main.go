@@ -4,7 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/louisevanderlith/blog/controllers/article"
 	"github.com/louisevanderlith/blog/core"
-	"github.com/louisevanderlith/blog/droxo"
+	"github.com/louisevanderlith/droxo"
 )
 
 func main() {
