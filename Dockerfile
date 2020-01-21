@@ -12,7 +12,6 @@ FROM build_base as builder
 COPY main.go .
 COPY controllers ./controllers
 COPY core ./core
-COPY droxo ./droxo
 
 RUN CGO_ENABLED="0" go build
 
