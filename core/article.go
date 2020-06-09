@@ -21,25 +21,25 @@ func (a Article) Valid() (bool, error) {
 	return husk.ValidateStruct(&a)
 }
 
-func GetArticle(key husk.Key) (*Article, error) {
+func GetArticle(key husk.Key) (Article, error) {
 	rec, err := ctx.Articles.FindByKey(key)
 
 	if err != nil {
-		return nil, err
+		return Article{}, err
 	}
 
-	return rec.Data().(*Article), nil
+	return rec.Data().(Article), nil
 }
 
-func GetLatestArticles(page, size int) husk.Collection {
+func GetLatestArticles(page, size int) (husk.Collection, error) {
 	return ctx.Articles.Find(page, size, byPublished())
 }
 
-func GetNonPublicArticles(page, size int) husk.Collection {
+func GetNonPublicArticles(page, size int) (husk.Collection, error) {
 	return ctx.Articles.Find(page, size, husk.Everything())
 }
 
-func GetArticlesByCategory(category string, page, size int) husk.Collection {
+func GetArticlesByCategory(category string, page, size int) (husk.Collection, error) {
 	return ctx.Articles.Find(page, size, byCategory(category))
 }
 

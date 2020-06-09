@@ -1,0 +1,9 @@
+name: mango_blog
+version: 1.0.0
+description: Wrapper for Blog API
+repository: https://github.com/louisevanderlith/blog
+homepage: https://github.com/louisevanderlith/blog
+environment:
+  sdk: '>=2.0.0 < 3.0.0'
+dependencies:
+  mango_ui: '^1.0.1'
