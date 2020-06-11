@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-func SetupRoutes(host, scrt, secureUrl string) http.Handler {
+func SetupRoutes(scrt, secureUrl string) http.Handler {
 	r := mux.NewRouter()
 
 	view := kong.ResourceMiddleware("blog.articles.view", scrt, secureUrl, ViewArticle)
@@ -23,8 +23,14 @@ func SetupRoutes(host, scrt, secureUrl string) http.Handler {
 	update := kong.ResourceMiddleware("blog.articles.update", scrt, secureUrl, UpdateArticle)
 	r.HandleFunc("/articles", update).Methods(http.MethodPut)
 
+	lst, err := kong.Whitelist(http.DefaultClient, secureUrl, "blog.articles.view", scrt)
+
+	if err != nil {
+		panic(err)
+	}
+
 	corsOpts := cors.New(cors.Options{
-		AllowedOrigins: []string{"*"}, //[]string{fmt.Sprintf("https://*%s", strings.TrimSuffix(host, "/"))}, //you service is available and allowed for this base url
+		AllowedOrigins: lst,
 		AllowedMethods: []string{
 			http.MethodGet,
 			http.MethodPost,
