@@ -98,7 +98,7 @@ func CreateArticle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = ctx.Serve(http.StatusOK, mix.JSON(rec))
+	err = ctx.Serve(http.StatusOK, mix.JSON(rec.Record))
 
 	if err != nil {
 		log.Println(err)

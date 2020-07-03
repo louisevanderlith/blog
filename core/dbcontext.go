@@ -12,7 +12,6 @@ type context struct {
 var ctx context
 
 func CreateContext() {
-
 	ctx = context{
 		Articles: husk.NewTable(Article{}, serials.GobSerial{}),
 	}

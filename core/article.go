@@ -17,7 +17,7 @@ type Article struct {
 	Intro     string        `hsk:"size(128)"`
 }
 
-func (a Article) Valid() (bool, error) {
+func (a Article) Valid() error {
 	return husk.ValidateStruct(&a)
 }
 
