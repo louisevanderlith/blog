@@ -19,7 +19,7 @@ func GetPublicArticles(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "", http.StatusNotFound)
 		return
 	}
-
+	
 	err = ctx.Serve(http.StatusOK, mix.JSON(results))
 
 	if err != nil {

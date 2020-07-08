@@ -39,10 +39,6 @@ func GetNonPublicArticles(page, size int) (husk.Collection, error) {
 	return ctx.Articles.Find(page, size, husk.Everything())
 }
 
-func GetArticlesByCategory(category string, page, size int) (husk.Collection, error) {
-	return ctx.Articles.Find(page, size, byCategory(category))
-}
-
 func RemoveArticle(key husk.Key) error {
 	err := ctx.Articles.Delete(key)
 
@@ -53,11 +49,22 @@ func RemoveArticle(key husk.Key) error {
 	return ctx.Articles.Save()
 }
 
-func (a Article) Create() husk.CreateSet {
+func (a Article) Create() (husk.Recorder, error) {
 	a.Public = false
 
-	defer ctx.Articles.Save()
-	return ctx.Articles.Create(a)
+	rec, err := ctx.Articles.Create(a)
+
+	if err != nil {
+		return nil, err
+	}
+
+	err = ctx.Articles.Save()
+
+	if err != nil {
+		return nil, err
+	}
+
+	return rec, nil
 }
 
 func (a Article) Update(key husk.Key) error {

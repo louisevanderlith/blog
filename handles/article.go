@@ -81,7 +81,7 @@ func SearchArticles(w http.ResponseWriter, r *http.Request) {
 // @router / [post]
 func CreateArticle(w http.ResponseWriter, r *http.Request) {
 	ctx := context.New(w, r)
-	var obj core.Article
+	obj := core.Article{}
 	err := ctx.Body(&obj)
 
 	if err != nil {
@@ -90,18 +90,18 @@ func CreateArticle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	rec := obj.Create()
+	rec, err := obj.Create()
 
-	if rec.Error != nil {
-		log.Println(err)
+	if err != nil {
+		log.Println("Create Error", err)
 		http.Error(w, "", http.StatusInternalServerError)
 		return
 	}
 
-	err = ctx.Serve(http.StatusOK, mix.JSON(rec.Record))
+	err = ctx.Serve(http.StatusOK, mix.JSON(rec))
 
 	if err != nil {
-		log.Println(err)
+		log.Println("Serve Error", err)
 	}
 }
 
@@ -125,7 +125,7 @@ func UpdateArticle(w http.ResponseWriter, r *http.Request) {
 	err = ctx.Body(body)
 
 	if err != nil {
-		log.Println(err)
+		log.Println("Bind Error", err)
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
@@ -133,7 +133,7 @@ func UpdateArticle(w http.ResponseWriter, r *http.Request) {
 	err = body.Update(key)
 
 	if err != nil {
-		log.Println(err)
+		log.Println("Update Error", err)
 		http.Error(w, "", http.StatusNotFound)
 		return
 	}
@@ -141,7 +141,7 @@ func UpdateArticle(w http.ResponseWriter, r *http.Request) {
 	err = ctx.Serve(http.StatusOK, mix.JSON(nil))
 
 	if err != nil {
-		log.Println(err)
+		log.Println("Serve Error", err)
 	}
 }
 
@@ -151,7 +151,7 @@ func DeleteArticle(w http.ResponseWriter, r *http.Request) {
 	key, err := husk.ParseKey(k)
 
 	if err != nil {
-		log.Println(err)
+		log.Println("Parse Key Error", err)
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
@@ -159,7 +159,7 @@ func DeleteArticle(w http.ResponseWriter, r *http.Request) {
 	err = core.RemoveArticle(key)
 
 	if err != nil {
-		log.Println(err)
+		log.Println("Remove Error", err)
 		http.Error(w, "", http.StatusInternalServerError)
 		return
 	}
@@ -167,6 +167,6 @@ func DeleteArticle(w http.ResponseWriter, r *http.Request) {
 	err = ctx.Serve(http.StatusOK, mix.JSON("Completed"))
 
 	if err != nil {
-		log.Println(err)
+		log.Println("Serve Error", err)
 	}
 }
