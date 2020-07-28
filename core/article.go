@@ -18,7 +18,7 @@ type Article struct {
 }
 
 func (a Article) Valid() error {
-	return husk.ValidateStruct(&a)
+	return husk.ValidateStruct(a)
 }
 
 func GetArticle(key husk.Key) (Article, error) {

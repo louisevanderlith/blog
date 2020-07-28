@@ -15,7 +15,7 @@ func GetArticles(w http.ResponseWriter, r *http.Request) {
 	results, err := core.GetNonPublicArticles(1, 10)
 
 	if err != nil {
-		log.Println(err)
+		log.Println("Get Articles Error", err)
 		http.Error(w, "", http.StatusNotFound)
 		return
 	}
@@ -23,7 +23,7 @@ func GetArticles(w http.ResponseWriter, r *http.Request) {
 	err = ctx.Serve(http.StatusOK, mix.JSON(results))
 
 	if err != nil {
-		log.Println(err)
+		log.Println("Serve Error", err)
 	}
 }
 
@@ -34,7 +34,7 @@ func ViewArticle(w http.ResponseWriter, r *http.Request) {
 	key, err := husk.ParseKey(k)
 
 	if err != nil {
-		log.Println(err)
+		log.Println("Parse Key Error", err)
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
@@ -42,7 +42,7 @@ func ViewArticle(w http.ResponseWriter, r *http.Request) {
 	rec, err := core.GetArticle(key)
 
 	if err != nil {
-		log.Println(err)
+		log.Println("Get Article Error", err)
 		http.Error(w, "", http.StatusNotFound)
 		return
 	}
@@ -50,7 +50,7 @@ func ViewArticle(w http.ResponseWriter, r *http.Request) {
 	err = ctx.Serve(http.StatusOK, mix.JSON(rec))
 
 	if err != nil {
-		log.Println(err)
+		log.Println("Serve Error", err)
 	}
 }
 
@@ -61,7 +61,7 @@ func SearchArticles(w http.ResponseWriter, r *http.Request) {
 	results, err := core.GetNonPublicArticles(page, size)
 
 	if err != nil {
-		log.Println(err)
+		log.Println("Get Articles Error", err)
 		http.Error(w, "", http.StatusNotFound)
 		return
 	}
@@ -69,7 +69,7 @@ func SearchArticles(w http.ResponseWriter, r *http.Request) {
 	err = ctx.Serve(http.StatusOK, mix.JSON(results))
 
 	if err != nil {
-		log.Println(err)
+		log.Println("Serve Error", err)
 	}
 }
 
@@ -85,7 +85,7 @@ func CreateArticle(w http.ResponseWriter, r *http.Request) {
 	err := ctx.Body(&obj)
 
 	if err != nil {
-		log.Println(err)
+		log.Println("Bind Error", err)
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
@@ -116,7 +116,7 @@ func UpdateArticle(w http.ResponseWriter, r *http.Request) {
 	key, err := husk.ParseKey(ctx.FindParam("key"))
 
 	if err != nil {
-		log.Println(err)
+		log.Println("Parse Key Error", err)
 		http.Error(w, "", http.StatusBadRequest)
 		return
 	}
