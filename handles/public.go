@@ -1,17 +1,16 @@
 package handles
 
 import (
+	"github.com/louisevanderlith/droxolite/drx"
 	"github.com/louisevanderlith/droxolite/mix"
 	"log"
 	"net/http"
 
 	"github.com/louisevanderlith/blog/core"
-	"github.com/louisevanderlith/droxolite/context"
 	"github.com/louisevanderlith/husk"
 )
 
 func GetPublicArticles(w http.ResponseWriter, r *http.Request) {
-	ctx := context.New(w, r)
 	results, err := core.GetLatestArticles(1, 10)
 
 	if err != nil {
@@ -19,8 +18,8 @@ func GetPublicArticles(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "", http.StatusNotFound)
 		return
 	}
-	
-	err = ctx.Serve(http.StatusOK, mix.JSON(results))
+
+	err = mix.Write(w, mix.JSON(results))
 
 	if err != nil {
 		log.Println(err)
@@ -29,8 +28,7 @@ func GetPublicArticles(w http.ResponseWriter, r *http.Request) {
 
 // @router /:pagesize [get]
 func SearchPublicArticles(w http.ResponseWriter, r *http.Request) {
-	ctx := context.New(w, r)
-	page, size := ctx.GetPageData()
+	page, size := drx.GetPageData(r)
 	results, err := core.GetLatestArticles(page, size)
 
 	if err != nil {
@@ -39,7 +37,7 @@ func SearchPublicArticles(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = ctx.Serve(http.StatusOK, mix.JSON(results))
+	err = mix.Write(w, mix.JSON(results))
 
 	if err != nil {
 		log.Println(err)
@@ -47,8 +45,7 @@ func SearchPublicArticles(w http.ResponseWriter, r *http.Request) {
 }
 
 func ViewPublicArticle(w http.ResponseWriter, r *http.Request) {
-	ctx := context.New(w, r)
-	k := ctx.FindParam("key")
+	k := drx.FindParam(r, "key")
 	key, err := husk.ParseKey(k)
 
 	if err != nil {
@@ -65,7 +62,7 @@ func ViewPublicArticle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = ctx.Serve(http.StatusOK, mix.JSON(rec))
+	err = mix.Write(w, mix.JSON(rec))
 
 	if err != nil {
 		log.Println(err)
