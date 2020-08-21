@@ -10,21 +10,21 @@ import (
 
 func SetupRoutes(scrt, securityUrl, managerUrl string) http.Handler {
 	r := mux.NewRouter()
-
-	get := kong.ResourceMiddleware(http.DefaultClient, "blog.articles.search", scrt, securityUrl, managerUrl, GetArticles)
+	ins := kong.NewResourceInspector(http.DefaultClient, securityUrl, managerUrl)
+	get := ins.Middleware("blog.articles.search", scrt, GetArticles)
 	r.HandleFunc("/articles", get).Methods(http.MethodGet)
 
-	view := kong.ResourceMiddleware(http.DefaultClient, "blog.articles.view", scrt, securityUrl, managerUrl, ViewArticle)
+	view := ins.Middleware("blog.articles.view", scrt, ViewArticle)
 	r.HandleFunc("/articles/{key:[0-9]+\\x60[0-9]+}", view).Methods(http.MethodGet)
 
-	srch := kong.ResourceMiddleware(http.DefaultClient, "blog.articles.search", scrt, securityUrl, managerUrl, SearchArticles)
+	srch := ins.Middleware("blog.articles.search", scrt, SearchArticles)
 	r.HandleFunc("/articles/{pagesize:[A-Z][0-9]+}", srch).Methods(http.MethodGet)
 	r.HandleFunc("/articles/{pagesize:[A-Z][0-9]+}/{hash:[a-zA-Z0-9]+={0,2}}", srch).Methods(http.MethodGet)
 
-	create := kong.ResourceMiddleware(http.DefaultClient, "blog.articles.create", scrt, securityUrl, managerUrl, CreateArticle)
+	create := ins.Middleware("blog.articles.create", scrt, CreateArticle)
 	r.HandleFunc("/articles", create).Methods(http.MethodPost)
 
-	update := kong.ResourceMiddleware(http.DefaultClient, "blog.articles.update", scrt, securityUrl, managerUrl, UpdateArticle)
+	update := ins.Middleware("blog.articles.update", scrt, UpdateArticle)
 	r.HandleFunc("/articles", update).Methods(http.MethodPut)
 
 	lst, err := kong.Whitelist(http.DefaultClient, securityUrl, "blog.articles.view", scrt)
