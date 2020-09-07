@@ -3,15 +3,15 @@ package handles
 import (
 	"github.com/louisevanderlith/droxolite/drx"
 	"github.com/louisevanderlith/droxolite/mix"
+	"github.com/louisevanderlith/husk/keys"
 	"log"
 	"net/http"
 
 	"github.com/louisevanderlith/blog/core"
-	"github.com/louisevanderlith/husk"
 )
 
 func GetArticles(w http.ResponseWriter, r *http.Request) {
-	results, err := core.GetNonPublicArticles(1, 10)
+	results, err := core.Context().GetNonPublicArticles(1, 10)
 
 	if err != nil {
 		log.Println("Get Articles Error", err)
@@ -29,7 +29,7 @@ func GetArticles(w http.ResponseWriter, r *http.Request) {
 // /:key
 func ViewArticle(w http.ResponseWriter, r *http.Request) {
 	k := drx.FindParam(r, "key")
-	key, err := husk.ParseKey(k)
+	key, err := keys.ParseKey(k)
 
 	if err != nil {
 		log.Println("Parse Key Error", err)
@@ -37,7 +37,7 @@ func ViewArticle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	rec, err := core.GetArticle(key)
+	rec, err := core.Context().GetArticle(key)
 
 	if err != nil {
 		log.Println("Get Article Error", err)
@@ -55,7 +55,7 @@ func ViewArticle(w http.ResponseWriter, r *http.Request) {
 // @router /all/:pagesize [get]
 func SearchArticles(w http.ResponseWriter, r *http.Request) {
 	page, size := drx.GetPageData(r)
-	results, err := core.GetNonPublicArticles(page, size)
+	results, err := core.Context().GetNonPublicArticles(page, size)
 
 	if err != nil {
 		log.Println("Get Articles Error", err)
@@ -86,7 +86,7 @@ func CreateArticle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	rec, err := obj.Create()
+	rec, err := core.Context().CreateArticle(obj)
 
 	if err != nil {
 		log.Println("Create Error", err)
@@ -108,7 +108,7 @@ func CreateArticle(w http.ResponseWriter, r *http.Request) {
 // @Failure 403 body is empty
 // @router / [put]
 func UpdateArticle(w http.ResponseWriter, r *http.Request) {
-	key, err := husk.ParseKey(drx.FindParam(r, "key"))
+	key, err := keys.ParseKey(drx.FindParam(r, "key"))
 
 	if err != nil {
 		log.Println("Parse Key Error", err)
@@ -116,8 +116,8 @@ func UpdateArticle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	body := &core.Article{}
-	err = drx.JSONBody(r, body)
+	body := core.Article{}
+	err = drx.JSONBody(r, &body)
 
 	if err != nil {
 		log.Println("Bind Error", err)
@@ -125,7 +125,7 @@ func UpdateArticle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = body.Update(key)
+	err = core.Context().UpdateArticle(key, body)
 
 	if err != nil {
 		log.Println("Update Error", err)
@@ -142,7 +142,7 @@ func UpdateArticle(w http.ResponseWriter, r *http.Request) {
 
 func DeleteArticle(w http.ResponseWriter, r *http.Request) {
 	k := drx.FindParam(r, "key")
-	key, err := husk.ParseKey(k)
+	key, err := keys.ParseKey(k)
 
 	if err != nil {
 		log.Println("Parse Key Error", err)
@@ -150,7 +150,7 @@ func DeleteArticle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = core.RemoveArticle(key)
+	err = core.Context().RemoveArticle(key)
 
 	if err != nil {
 		log.Println("Remove Error", err)

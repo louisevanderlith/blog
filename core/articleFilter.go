@@ -1,15 +1,14 @@
 package core
 
 import (
+	"github.com/louisevanderlith/husk/hsk"
 	"strings"
-
-	"github.com/louisevanderlith/husk"
 )
 
 type articleFilter func(obj Article) bool
 
-func (f articleFilter) Filter(obj husk.Dataer) bool {
-	return f(obj.(Article))
+func (f articleFilter) Filter(obj hsk.Record) bool {
+	return f(obj.Data().(Article))
 }
 
 func byPublished() articleFilter {

@@ -3,15 +3,15 @@ package handles
 import (
 	"github.com/louisevanderlith/droxolite/drx"
 	"github.com/louisevanderlith/droxolite/mix"
+	"github.com/louisevanderlith/husk/keys"
 	"log"
 	"net/http"
 
 	"github.com/louisevanderlith/blog/core"
-	"github.com/louisevanderlith/husk"
 )
 
 func GetPublicArticles(w http.ResponseWriter, r *http.Request) {
-	results, err := core.GetLatestArticles(1, 10)
+	results, err := core.Context().GetLatestArticles(1, 10)
 
 	if err != nil {
 		log.Println(err)
@@ -29,7 +29,7 @@ func GetPublicArticles(w http.ResponseWriter, r *http.Request) {
 // @router /:pagesize [get]
 func SearchPublicArticles(w http.ResponseWriter, r *http.Request) {
 	page, size := drx.GetPageData(r)
-	results, err := core.GetLatestArticles(page, size)
+	results, err := core.Context().GetLatestArticles(page, size)
 
 	if err != nil {
 		log.Println(err)
@@ -46,7 +46,7 @@ func SearchPublicArticles(w http.ResponseWriter, r *http.Request) {
 
 func ViewPublicArticle(w http.ResponseWriter, r *http.Request) {
 	k := drx.FindParam(r, "key")
-	key, err := husk.ParseKey(k)
+	key, err := keys.ParseKey(k)
 
 	if err != nil {
 		log.Println(err)
@@ -54,7 +54,7 @@ func ViewPublicArticle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	rec, err := core.GetArticle(key)
+	rec, err := core.Context().GetArticle(key)
 
 	if err != nil {
 		log.Println(err)
