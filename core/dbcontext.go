@@ -36,7 +36,7 @@ func (c context) GetArticle(key hsk.Key) (Article, error) {
 		return Article{}, err
 	}
 
-	return rec.Data().(Article), nil
+	return rec.GetValue().(Article), nil
 }
 
 func (c context) GetLatestArticles(page, size int) (records.Page, error) {

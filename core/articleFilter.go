@@ -8,7 +8,7 @@ import (
 type articleFilter func(obj Article) bool
 
 func (f articleFilter) Filter(obj hsk.Record) bool {
-	return f(obj.Data().(Article))
+	return f(obj.GetValue().(Article))
 }
 
 func byPublished() articleFilter {
