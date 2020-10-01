@@ -1,16 +1,16 @@
 package handles
 
 import (
+	"github.com/louisevanderlith/kong/middle"
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/louisevanderlith/kong"
 	"github.com/rs/cors"
 )
 
 func SetupRoutes(scrt, securityUrl, managerUrl string) http.Handler {
 	r := mux.NewRouter()
-	ins := kong.NewResourceInspector(http.DefaultClient, securityUrl, managerUrl)
+	ins := middle.NewResourceInspector(http.DefaultClient, securityUrl, managerUrl)
 	get := ins.Middleware("blog.articles.search", scrt, GetArticles)
 	r.HandleFunc("/articles", get).Methods(http.MethodGet)
 
@@ -27,7 +27,7 @@ func SetupRoutes(scrt, securityUrl, managerUrl string) http.Handler {
 	update := ins.Middleware("blog.articles.update", scrt, UpdateArticle)
 	r.HandleFunc("/articles", update).Methods(http.MethodPut)
 
-	lst, err := kong.Whitelist(http.DefaultClient, securityUrl, "blog.articles.view", scrt)
+	lst, err := middle.Whitelist(http.DefaultClient, securityUrl, "blog.articles.view", scrt)
 
 	if err != nil {
 		panic(err)
