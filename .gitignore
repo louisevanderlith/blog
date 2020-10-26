@@ -19,3 +19,5 @@ db/*.husk
 .idea
 .packages
 .dart_tool
+
+cmd/cmd
