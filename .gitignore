@@ -15,3 +15,9 @@ blog
 
 db/*.husk
 !db/*.seed.json
+
+.idea
+.packages
+.dart_tool
+
+cmd/cmd
