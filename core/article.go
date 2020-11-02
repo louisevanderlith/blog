@@ -10,7 +10,7 @@ import (
 type Article struct {
 	Title     string `hsk:"size(128)"`
 	Category  string
-	ImageKey  keys.TimeKey
+	ImageKey  *keys.TimeKey
 	Content   template.HTML `hsk:"size(4096)"`
 	WrittenBy string        `hsk:"size(64)"`
 	Public    bool          `hsk:"default(false)"`

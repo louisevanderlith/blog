@@ -6,6 +6,7 @@ import (
 	"github.com/louisevanderlith/blog/core"
 	"github.com/louisevanderlith/husk/hsk"
 	"github.com/louisevanderlith/husk/records"
+	"io/ioutil"
 	"net/http"
 )
 
@@ -18,6 +19,11 @@ func FetchArticle(web *http.Client, host string, k hsk.Key) (core.Article, error
 	}
 
 	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		bdy, _ := ioutil.ReadAll(resp.Body)
+		return core.Article{}, fmt.Errorf("%v: %s", resp.StatusCode, string(bdy))
+	}
 
 	result := core.Article{}
 	dec := json.NewDecoder(resp.Body)
@@ -35,6 +41,11 @@ func FetchLatestArticles(web *http.Client, host, pagesize string) (records.Page,
 	}
 
 	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		bdy, _ := ioutil.ReadAll(resp.Body)
+		return nil, fmt.Errorf("%v: %s", resp.StatusCode, string(bdy))
+	}
 
 	result := records.NewResultPage(core.Article{})
 	dec := json.NewDecoder(resp.Body)
