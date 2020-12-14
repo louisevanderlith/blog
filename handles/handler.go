@@ -18,8 +18,7 @@ func SetupRoutes(audience, issuer string) http.Handler {
 	r.Handle("/articles/{pagesize:[A-Z][0-9]+}/{hash:[a-zA-Z0-9]+={0,2}}", mw.Handler(http.HandlerFunc(SearchArticles))).Methods(http.MethodGet)
 
 	r.Handle("/articles", mw.Handler(http.HandlerFunc(CreateArticle))).Methods(http.MethodPost)
-
-	r.Handle("/articles", mw.Handler(http.HandlerFunc(UpdateArticle))).Methods(http.MethodPut)
+	r.Handle("/articles/{key:[0-9]+\\x60[0-9]+}", mw.Handler(http.HandlerFunc(UpdateArticle))).Methods(http.MethodPut)
 
 	//lst, err := middle.Whitelist(http.DefaultClient, securityUrl, "blog.articles.view", scrt)
 

@@ -1,6 +1,7 @@
 package handles
 
 import (
+	"github.com/dgrijalva/jwt-go"
 	"github.com/louisevanderlith/droxolite/drx"
 	"github.com/louisevanderlith/droxolite/mix"
 	"github.com/louisevanderlith/husk/keys"
@@ -77,6 +78,9 @@ func SearchArticles(w http.ResponseWriter, r *http.Request) {
 // @Failure 403 body is empty
 // @router / [post]
 func CreateArticle(w http.ResponseWriter, r *http.Request) {
+	usr := r.Context().Value("user").(*jwt.Token)
+	claims := usr.Claims.(jwt.MapClaims)
+	log.Println("Claims", claims)
 	obj := core.Article{}
 	err := drx.JSONBody(r, &obj)
 
@@ -86,6 +90,7 @@ func CreateArticle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	obj.WrittenBy = claims["name"].(string)
 	rec, err := core.Context().CreateArticle(obj)
 
 	if err != nil {
@@ -108,6 +113,9 @@ func CreateArticle(w http.ResponseWriter, r *http.Request) {
 // @Failure 403 body is empty
 // @router / [put]
 func UpdateArticle(w http.ResponseWriter, r *http.Request) {
+	usr := r.Context().Value("user").(*jwt.Token)
+	claims := usr.Claims.(jwt.MapClaims)
+
 	key, err := keys.ParseKey(drx.FindParam(r, "key"))
 
 	if err != nil {
@@ -125,6 +133,11 @@ func UpdateArticle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	usrname := claims["name"]
+	if usrname != body.WrittenBy {
+		log.Println("Wrong Name:", usrname, body.WrittenBy)
+	}
+
 	err = core.Context().UpdateArticle(key, body)
 
 	if err != nil {
@@ -133,7 +146,7 @@ func UpdateArticle(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = mix.Write(w, mix.JSON(nil))
+	err = mix.Write(w, mix.JSON("Saved"))
 
 	if err != nil {
 		log.Println("Serve Error", err)
